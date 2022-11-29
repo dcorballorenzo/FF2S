@@ -41,6 +41,6 @@ tensorflow==2.10.0; sys_platform == 'darwin' and 'ARM' not in platform_version #
 tensorflow==2.10.0; sys_platform != 'darwin' # Windows & Ubuntu Intel chips
 
 # prevent bq 3+ db-dtypes package error when running training from bq
-#google-cloud-bigquery<3.0.0
-#google-cloud-storage
-#pyarrow
+google-cloud-bigquery<3.0.0
+google-cloud-storage
+pyarrow
