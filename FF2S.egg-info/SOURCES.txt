@@ -1,7 +1,6 @@
 README.md
 setup.py
 FF2S/__init__.py
-FF2S/vierge.py
 FF2S.egg-info/PKG-INFO
 FF2S.egg-info/SOURCES.txt
 FF2S.egg-info/dependency_links.txt
