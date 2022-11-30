@@ -22,7 +22,7 @@ def normalize(image, max = 255):
 
 def photo_sketch_join(photos_path: str, sketches_path:str):
     '''
-    Creates a dictionary containing every pair photo-sketch
+    Creates a dataframe containing every pair photo-sketch
     Shape: (number of pairs, 2)
     '''
 
