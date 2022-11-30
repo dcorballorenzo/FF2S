@@ -16,6 +16,8 @@ pygeohash
 pytest
 scikit-learn
 yapf
+pydot
+graphviz
 
 jupyter-contrib-core==0.4.0
 jupyter-contrib-nbextensions==0.5.1
