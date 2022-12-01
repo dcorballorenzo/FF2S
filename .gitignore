@@ -1,5 +1,8 @@
 .DS_Store
 .python-version
 raw_data/
+preproc_data/
+preproc_sketch/
 .env
 *.egg-info
+sketch_preproc/
