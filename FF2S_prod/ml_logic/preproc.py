@@ -1,3 +1,7 @@
+import os
+import matplotlib.pyplot as plt
+import pandas as pd
+
 def same_size(path):
     '''
     Evaluates whether a folder has all images with the same size or not
@@ -55,3 +59,13 @@ def photo_sketch_load(photos_path: str, sketches_path:str):
 
     dict_aux = dict(photo=photo_arrays, sketch=sketch_arrays)
     return dict_aux
+
+
+def clean_namelist(raw_namelist):
+#clean the .jpg name list and sort it
+    clean_name_list = list()
+    for x in raw_namelist:
+        if ".jpg" in x:
+            clean_name_list.append(x)
+    clean_name_list.sort()
+    return clean_name_list
