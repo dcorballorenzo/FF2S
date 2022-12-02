@@ -6,3 +6,4 @@ preproc_sketch/*
 .env
 *.egg-info
 sketch_preproc/
+CycleGan_results/models/*
