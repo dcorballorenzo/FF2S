@@ -1,26 +1,34 @@
 from FF2S_prod.ml_logic.preproc import clean_namelist
-from FF2S_prod.ml_logic.params import SAMPLE_SIZE
+from FF2S_prod.ml_logic.params import SAMPLE_SIZE, PHOTO_TO_SKETCH_DICT,PHOTO_FULL_LIST,SKETCH_FULL_LIST
 import os
 import numpy as np
 import matplotlib.pyplot as plt
 import random
 
-def load_images(path, n_samples = SAMPLE_SIZE):
-    """Takes as input a path to images and returns
+def get_photo_sketch_dict(photo_list,sketch_list):
+    """Takes 2 lists of matching length as input and returns a dictionary with the
+    first list as key and the second list as value (in corresponding order"""
+
+    if len(photo_list)==len(sketch_list):
+        return {photo_list[i]:sketch_list[i] for i in range(len(photo_list))}
+    else :
+        print("The length of the sketch list must match the length of the photo list! Please check the data folders.")
+        return None
+
+def get_sample(sketch_list=SKETCH_FULL_LIST,photo_list=PHOTO_FULL_LIST,translation_dict= PHOTO_TO_SKETCH_DICT, n_samples = SAMPLE_SIZE ):
+    """ Returns """
+
+    photo_sample = random.sample(photo_list,n_samples)
+    sketch_sample = [translation_dict[photo] for photo in photo_sample]
+
+    return photo_sample,sketch_sample
+
+
+
+def load_images(image_list):
+    """Takes as input a list of images names and returns an array containing the images
     """
 
-    #get the list of filenames
-    raw_name_list=os.listdir(path)
-
-    #clean the filenames list
-    clean_name_list = clean_namelist(raw_name_list)
-
-    #get a sample list of photos
-
-    sample_list = random.sample(clean_name_list,n_samples)
-
-	# enumerate filenames in directory
-
-    data_list = [np.asarray(plt.imread(os.path.join(path,filename))) for filename in sample_list]
+    data_list = [np.asarray(plt.imread(filename)) for filename in image_list]
 
     return np.asarray(data_list)
