@@ -17,10 +17,14 @@ from keras.layers import Activation
 from keras.layers import Concatenate
 from keras.layers import Dropout
 from keras.layers import BatchNormalization
+from FF2S_prod.ml_logic.registry import save_model
+import os
+import matplotlib.pyplot as plt
+
+from FF2S_prod.ml_logic.params import LOCAL_REGISTRY_PATH
 
 
-
-def define_discriminator(image_shape):
+def define_discriminator(image_shape=(256,256,3)):
     # weight initialization
     init = RandomNormal(stddev=0.02)
     # source image input
@@ -125,7 +129,7 @@ def define_generator(image_shape=(256,256,3)):
 
 
 # define the combined generator and discriminator model, for updating the generator
-def define_gan(g_model, d_model, image_shape):
+def define_gan(g_model, d_model, image_shape=(256,256,3)):
     # make weights in the discriminator not trainable
     for layer in d_model.layers:
         if not isinstance(layer, BatchNormalization):
@@ -179,31 +183,35 @@ def summarize_performance(step, g_model, dataset, n_samples=3):
     X_fakeB = (X_fakeB + 1) / 2.0
     # plot real source images
     for i in range(n_samples):
-        pyplot.subplot(3, n_samples, 1 + i)
-        pyplot.axis('off')
-        pyplot.imshow(X_realA[i])
+        plt.subplot(3, n_samples, 1 + i)
+        plt.axis('off')
+        plt.imshow(X_realA[i])
     # plot generated target image
     for i in range(n_samples):
-        pyplot.subplot(3, n_samples, 1 + n_samples + i)
-        pyplot.axis('off')
-        pyplot.imshow(X_fakeB[i])
+        plt.subplot(3, n_samples, 1 + n_samples + i)
+        plt.axis('off')
+        plt.imshow(X_fakeB[i])
     # plot real target image
     for i in range(n_samples):
-        pyplot.subplot(3, n_samples, 1 + n_samples*2 + i)
-        pyplot.axis('off')
-        pyplot.imshow(X_realB[i])
+        plt.subplot(3, n_samples, 1 + n_samples*2 + i)
+        plt.axis('off')
+        plt.imshow(X_realB[i])
+
     # save plot to file
-    filename1 = 'plot_%06d.png' % (step+1)
-    pyplot.savefig(filename1)
-    pyplot.close()
-    # save the generator model
-    filename2 = 'model_%06d.h5' % (step+1)
-    g_model.save(filename2)
-    print('>Saved: %s and %s' % (filename1, filename2))
+    filename1 = os.path.join(LOCAL_REGISTRY_PATH,"generated_sketches",'plot_%06d.png' % (step+1) )
+    plt.savefig(filename1)
+    plt.close()
+
+	# save the generator model
+    #filename2 = os.path.join(LOCAL_REGISTRY_PATH,"generated_sketches",'model_%06d.png' % (step+1) )
+    #g_model.save(filename2)
+    #print('>Saved: %s and %s' % (filename1, filename2))
+    return g_model
+
 
 
     # train pix2pix models
-def train(d_model, g_model, gan_model, dataset, n_epochs=5, n_batch=1):
+def train_model(d_model, g_model, gan_model, dataset, n_epochs=10, n_batch=1):
     # determine the output square shape of the discriminator
     n_patch = d_model.output_shape[1]
     # unpack dataset
@@ -228,19 +236,7 @@ def train(d_model, g_model, gan_model, dataset, n_epochs=5, n_batch=1):
         print('>%d, d1[%.3f] d2[%.3f] g[%.3f]' % (i+1, d_loss1, d_loss2, g_loss))
         # summarize model performance
         if (i+1) % (bat_per_epo * 1) == 0:
-            summarize_performance(i, g_model, dataset)
+            model_to_save = summarize_performance(i, g_model, dataset)
 
-
-
-
-
-# load image data
-dataset = (src_images - 127.5) / 127.5, src_images, (tar_images - 127.5) / 127.5
-print('Loaded', dataset[0].shape, dataset[1].shape)
-# define input shape based on the loaded dataset
-image_shape = dataset[0].shape[1:]
-# define the models
-d_model = define_discriminator(image_shape)
-g_model = define_generator(image_shape)
-# define the composite model
-gan_model = define_gan(g_model, d_model, image_shape)
+        if i == n_steps - 1:
+            save_model(model_to_save)

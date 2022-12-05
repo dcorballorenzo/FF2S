@@ -7,3 +7,4 @@ preproc_sketch/*
 *.egg-info
 sketch_preproc/
 CycleGan_results/models/*
+training_outputs/
