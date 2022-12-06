@@ -14,32 +14,31 @@ from tensorflow.keras import Model, models
 
 def save_model(model: Model = None,
                params: dict = None,
-               metrics: dict = None) -> None:
+               metrics: dict = None,
+               suffix :str = 'dev') -> None:
     """
     persist trained model, params and metrics
     """
-
-    timestamp = time.strftime("%Y%m%d-%H%M%S")
 
     print(Fore.BLUE + "\nSave model to local disk..." + Style.RESET_ALL)
 
     # save params
     if params is not None:
-        params_path = os.path.join(LOCAL_REGISTRY_PATH, "params", timestamp + ".pickle")
+        params_path = os.path.join(LOCAL_REGISTRY_PATH, "params", suffix + ".pickle")
         print(f"- params path: {params_path}")
         with open(params_path, "wb") as file:
             pickle.dump(params, file)
 
     # save metrics
     if metrics is not None:
-        metrics_path = os.path.join(LOCAL_REGISTRY_PATH, "metrics", timestamp + ".pickle")
+        metrics_path = os.path.join(LOCAL_REGISTRY_PATH, "metrics", suffix + ".pickle")
         print(f"- metrics path: {metrics_path}")
         with open(metrics_path, "wb") as file:
             pickle.dump(metrics, file)
 
     # save model
     if model is not None:
-        model_path = os.path.join(LOCAL_REGISTRY_PATH,"models", f"model_{timestamp}.h5")
+        model_path = os.path.join(LOCAL_REGISTRY_PATH,"models", f"model_{suffix}.h5")
         print(f"- model path: {model_path}")
         model.save(model_path)
         print(f'>Saved: {model_path}')
