@@ -6,9 +6,12 @@ from colorama import Fore, Style
 from FF2S_prod.ml_logic.gan import train_model
 from FF2S_prod.ml_logic.registry import load_model, save_model
 from FF2S_prod.ml_logic.data import get_photo_sample,get_sketch_sample, load_images
+from FF2S_prod.ml_logic.cycle_gan import define_discriminator_cycle, define_generator_cycle, define_composite_model, train_model_cycle
 from FF2S_prod.ml_logic.gan import define_discriminator, define_generator, define_gan, train_model
-from FF2S_prod.ml_logic.params import PHOTO_PATH, SKETCH_PATH
+from FF2S_prod.ml_logic.params import PHOTO_PATH, SKETCH_PATH,MODEL,LOCAL_REGISTRY_PATH
 import matplotlib.pyplot as plt
+import sys
+import os
 
 
 def preprocess():
@@ -23,21 +26,38 @@ def preprocess():
    return photo_array, sketch_array
 
 
-def train():
-    d_model = define_discriminator()
-    g_model = define_generator()
-    gan_model = define_gan(g_model, d_model)
-    dataset = preprocess()
-    train_model(d_model, g_model, gan_model, dataset)
+def train(suffix='dev'):
+    if MODEL=="CGAN":
+        d_model = define_discriminator()
+        g_model = define_generator()
+        gan_model = define_gan(g_model, d_model)
+        dataset = preprocess()
+        model = train_model(d_model, g_model, gan_model, dataset,suffix=suffix)
+        return model
+
+    elif MODEL =="CycleGAN":
+        # generator: B -> A
+        g_model_AtoB = define_generator_cycle()
+        # generator: B -> A
+        g_model_BtoA = define_generator_cycle()
+        # discriminator: A -> [real/fake]
+        d_model_A = define_discriminator_cycle()
+        # discriminator: B -> [real/fake]
+        d_model_B = define_discriminator_cycle()
+        # composite: A -> B -> [real/fake, A]
+        c_model_AtoB = define_composite_model(g_model_AtoB, d_model_B, g_model_BtoA)
+        # composite: B -> A -> [real/fake, B]
+        c_model_BtoA = define_composite_model(g_model_BtoA, d_model_A, g_model_AtoB)
+        dataset = preprocess()
+        train_model_cycle(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, dataset,suffix=suffix)
 
 
 
-def pred(visualize=False):
+def pred(visualize=False,model_suffix='dev'):
     """
     Make a prediction using the latest trained model
     """
-
-    model = load_model('/Users/alicepannequin/code/dcorballorenzo/FF2S/training_outputs/models/model_20221205-165308.h5')
+    model = load_model(os.path.join(LOCAL_REGISTRY_PATH,"models",f"model_{model_suffix}.h5"))
     X_new_photo = get_photo_sample(n_samples=1)
     X_pred = load_images(X_new_photo,PHOTO_PATH)
 
@@ -57,7 +77,9 @@ def pred(visualize=False):
 
 
 
+
+
 if __name__=="__main__":
     preprocess()
-    train()
-    pred(visualize=True)
+    train(suffix=sys.argv[1])
+    pred(visualize=True,model_suffix=sys.argv[1])

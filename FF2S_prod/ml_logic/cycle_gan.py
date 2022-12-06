@@ -169,7 +169,7 @@ from matplotlib import pyplot
 # C64-C128-C256-C512
 #After the last layer, conv to 1-dimensional output, followed by a Sigmoid function.
 # The “axis” argument is set to -1 for instance norm. to ensure that features are normalized per feature map.
-def define_discriminator(image_shape):
+def define_discriminator_cycle(image_shape=(256,256,3)):
 	# weight initialization
 	init = RandomNormal(stddev=0.02)
 	# source image input
@@ -235,7 +235,7 @@ def resnet_block(n_filters, input_layer):
 #The network with 9 residual blocks consists of:
 #c7s1-64,d128,d256,R256,R256,R256,R256,R256,R256,R256,R256,R256,u128, u64,c7s1-3
 
-def define_generator(image_shape, n_resnet=9):
+def define_generator_cycle(image_shape=(256,256,3), n_resnet=9):
 	# weight initialization
 	init = RandomNormal(stddev=0.02)
 	# image input
@@ -273,7 +273,7 @@ def define_generator(image_shape, n_resnet=9):
 
 # define a composite model for updating generators by adversarial and cycle loss
 #We define a composite model that will be used to train each generator separately.
-def define_composite_model(g_model_1, d_model, g_model_2, image_shape):
+def define_composite_model(g_model_1, d_model, g_model_2, image_shape=(256,256,3)):
 	# Make the generator of interest trainable as we will be updating these weights.
     #by keeping other models constant.
     #Remember that we use this same function to train both generators,
@@ -395,7 +395,7 @@ def update_image_pool(pool, images, max_size=50):
 	return asarray(selected)
 
 # train cyclegan models
-def train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, dataset, epochs=1):
+def train_model_cycle(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, dataset, epochs=1,suffix='dev'):
 	# define properties of the training run
 	n_epochs, n_batch, = epochs, 1  #batch size fixed to 1 as suggested in the paper
 	# determine the output square shape of the discriminator
@@ -449,4 +449,4 @@ def train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_mode
 			# save the models
             # #If batch size (total images)=100, model will be saved after
             #every 75th iteration x 5 = 375 iterations.
-			save_models(i, g_model_AtoB, g_model_BtoA)
+			save_models(i, g_model_AtoB, g_model_BtoA,suffix=suffix)
