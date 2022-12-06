@@ -8,3 +8,5 @@ preproc_sketch/*
 sketch_preproc/
 CycleGan_results/models/*
 training_outputs/
+*/__pycache__
+*.pyc
