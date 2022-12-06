@@ -22,3 +22,5 @@ def get_photo_sketch_dict(photo_list,sketch_list):
 PHOTO_TO_SKETCH_DICT=get_photo_sketch_dict(PHOTO_FULL_LIST,SKETCH_FULL_LIST)
 
 LOCAL_REGISTRY_PATH=os.environ.get("LOCAL_REGISTRY_PATH")
+
+N_EPOCHS=os.environ.get("N_EPOCHS")
