@@ -5,10 +5,11 @@ from colorama import Fore, Style
 
 from FF2S_prod.ml_logic.gan import train_model
 from FF2S_prod.ml_logic.registry import load_model, save_model
-from FF2S_prod.ml_logic.data import get_photo_sample,get_sketch_sample, load_images
+from FF2S_prod.ml_logic.data import get_photo_sample,get_sketch_sample, load_images, clean_namelist
 from FF2S_prod.ml_logic.cycle_gan import define_discriminator_cycle, define_generator_cycle, define_composite_model, train_model_cycle
 from FF2S_prod.ml_logic.gan import define_discriminator, define_generator, define_gan, train_model
-from FF2S_prod.ml_logic.params import PHOTO_PATH, SKETCH_PATH,MODEL,LOCAL_REGISTRY_PATH
+from FF2S_prod.ml_logic.params import PHOTO_TRAIN, SKETCH_TRAIN, PHOTO_TEST, SKETCH_TEST, MODEL,LOCAL_REGISTRY_PATH
+
 import matplotlib.pyplot as plt
 import sys
 import os
@@ -17,10 +18,10 @@ import os
 def preprocess():
    photo_sample = get_photo_sample()
    sketch_sample=get_sketch_sample(photo_sample)
-   photo_array = load_images(photo_sample, PHOTO_PATH)
+   photo_array = load_images(photo_sample, PHOTO_TRAIN)
    photo_array=(photo_array-127.5)/127.5
 
-   sketch_array = load_images(sketch_sample, SKETCH_PATH)
+   sketch_array = load_images(sketch_sample, SKETCH_TRAIN)
    sketch_array=(sketch_array-127.5)/127.5
 
    return photo_array, sketch_array
@@ -34,6 +35,8 @@ def train(suffix='dev'):
         dataset = preprocess()
         model = train_model(d_model, g_model, gan_model, dataset,suffix=suffix)
         return model
+
+# train_model(d_model, g_model, gan_model, dataset, n_epochs=N_EPOCHS, n_batch=1,suffix='dev'):
 
     elif MODEL =="CycleGAN":
         # generator: B -> A
@@ -58,8 +61,9 @@ def pred(visualize=False,model_suffix='dev'):
     Make a prediction using the latest trained model
     """
     model = load_model(os.path.join(LOCAL_REGISTRY_PATH,"models",f"model_{model_suffix}.h5"))
-    X_new_photo = get_photo_sample(n_samples=1)
-    X_pred = load_images(X_new_photo,PHOTO_PATH)
+    X_new_photo = get_photo_sample(photo_list=clean_namelist(os.listdir(PHOTO_TEST)),n_samples=1)
+
+    X_pred = load_images(X_new_photo,PHOTO_TEST)
 
     X_processed = (X_pred - 127.5)/127.5
     if len(X_processed.shape)==3: X_processed = X_processed.reshape((1, 256, 256, 3))

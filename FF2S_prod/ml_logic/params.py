@@ -1,12 +1,16 @@
 import os
 from FF2S_prod.ml_logic.preproc import clean_namelist
 
-SKETCH_PATH=os.environ.get("SKETCH_PATH")
-PHOTO_PATH=os.environ.get("PHOTO_PATH")
+SKETCH_TRAIN=os.environ.get("SKETCH_TRAIN")
+PHOTO_TRAIN=os.environ.get("PHOTO_TRAIN")
 SAMPLE_SIZE=os.environ.get("SAMPLE_SIZE")
 
-SKETCH_FULL_LIST=clean_namelist(os.listdir(SKETCH_PATH))
-PHOTO_FULL_LIST=clean_namelist(os.listdir(PHOTO_PATH))
+SKETCH_TEST=os.environ.get("SKETCH_TEST")
+PHOTO_TEST=os.environ.get("PHOTO_TEST")
+
+SKETCH_FULL_LIST=clean_namelist(os.listdir(SKETCH_TRAIN))
+PHOTO_FULL_LIST=clean_namelist(os.listdir(PHOTO_TRAIN))
+
 
 def get_photo_sketch_dict(photo_list,sketch_list):
     """Takes 2 lists of matching length as input and returns a dictionary with the
