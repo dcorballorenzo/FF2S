@@ -2,6 +2,8 @@ from tensorflow.keras.layers import Layer, InputSpec
 from tensorflow.keras import initializers, regularizers, constraints
 from tensorflow.keras import backend as K
 
+from FF2S_prod.ml_logic.params import LOCAL_REGISTRY_PATH,N_EPOCHS
+
 
 class InstanceNormalization(Layer):
     """Instance normalization layer.
@@ -164,6 +166,7 @@ from tensorflow.keras.layers import Concatenate
 #Or install keras_contrib using guidelines here: https://github.com/keras-team/keras-contrib
 
 from matplotlib import pyplot
+import os
 
 # discriminator model (70x70 patchGAN)
 # C64-C128-C256-C512
@@ -338,12 +341,12 @@ def generate_fake_samples(g_model, dataset, patch_shape):
 	return X, y
 
 # periodically save the generator models to file
-def save_models(step, g_model_AtoB, g_model_BtoA):
+def save_models(step, g_model_AtoB, g_model_BtoA, suffix = 'dev'):
 	# save the first generator model
-	filename1 = 'g_model_AtoB_%06d.h5' % (step+1)
+	filename1 = os.path.join(LOCAL_REGISTRY_PATH,"models_1", f"model1_{suffix}.h5") % (step+1)
 	g_model_AtoB.save(filename1)
 	# save the second generator model
-	filename2 = 'g_model_BtoA_%06d.h5' % (step+1)
+	filename2 = os.path.join(LOCAL_REGISTRY_PATH,"models_2", f"model1_{suffix}.h5") % (step+1)
 	g_model_BtoA.save(filename2)
 	print('>Saved: %s and %s' % (filename1, filename2))
 
@@ -395,7 +398,7 @@ def update_image_pool(pool, images, max_size=50):
 	return asarray(selected)
 
 # train cyclegan models
-def train_model_cycle(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, dataset, epochs=1,suffix='dev'):
+def train_model_cycle(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, dataset, epochs=int(N_EPOCHS),suffix='dev'):
 	# define properties of the training run
 	n_epochs, n_batch, = epochs, 1  #batch size fixed to 1 as suggested in the paper
 	# determine the output square shape of the discriminator

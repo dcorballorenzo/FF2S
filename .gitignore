@@ -3,9 +3,11 @@
 raw_data/*
 .env
 *.egg-info
-CycleGan_results/models/*
+cycle_gan_results/models/*
 *FF2S_prod/ml_logic/__pycache__/*
 *.pyc
 *.png
 *.h5
 *.jpg
+preproc_data/*
+training_outputs/*
