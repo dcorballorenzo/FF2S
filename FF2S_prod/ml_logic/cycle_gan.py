@@ -343,10 +343,10 @@ def generate_fake_samples(g_model, dataset, patch_shape):
 # periodically save the generator models to file
 def save_models(step, g_model_AtoB, g_model_BtoA, suffix = 'dev'):
 	# save the first generator model
-	filename1 = os.path.join(LOCAL_REGISTRY_PATH,"models_1", f"model1_{suffix}.h5") % (step+1)
+	filename1 = os.path.join(LOCAL_REGISTRY_PATH,"models/models_cycle_1", f"model1_{suffix}.h5") % (step+1)
 	g_model_AtoB.save(filename1)
 	# save the second generator model
-	filename2 = os.path.join(LOCAL_REGISTRY_PATH,"models_2", f"model1_{suffix}.h5") % (step+1)
+	filename2 = os.path.join(LOCAL_REGISTRY_PATH,"models/models_cycle_2", f"model1_{suffix}.h5") % (step+1)
 	g_model_BtoA.save(filename2)
 	print('>Saved: %s and %s' % (filename1, filename2))
 
