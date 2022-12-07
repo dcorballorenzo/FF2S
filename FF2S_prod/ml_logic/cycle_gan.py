@@ -367,7 +367,7 @@ def summarize_performance(step, g_model, trainX, name, n_samples=5):
 		pyplot.axis('off')
 		pyplot.imshow(X_out[i])
 	# save plot to file
-	filename1 = '%s_generated_plot_%06d.png' % (name, (step+1))
+	filename1 = os.path.join(LOCAL_REGISTRY_PATH,"generated_sketches",'plot_%06d.png' % (step+1) )
 	pyplot.savefig(filename1)
 	pyplot.close()
 
