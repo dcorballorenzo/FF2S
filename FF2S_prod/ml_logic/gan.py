@@ -211,7 +211,7 @@ def summarize_performance(step, g_model, dataset, n_samples=3):
 
 
     # train pix2pix models
-def train_model(d_model, g_model, gan_model, dataset, n_epochs=N_EPOCHS, n_batch=1,suffix='dev'):
+def train_model(d_model, g_model, gan_model, dataset, n_epochs=N_EPOCHS, n_batch=1):
     # determine the output square shape of the discriminator
     n_patch = d_model.output_shape[1]
     # unpack dataset
@@ -219,7 +219,7 @@ def train_model(d_model, g_model, gan_model, dataset, n_epochs=N_EPOCHS, n_batch
     # calculate the number of batches per training epoch
     bat_per_epo = int(len(trainA) / n_batch)
     # calculate the number of training iterations
-    n_steps = int(bat_per_epo * n_epochs)
+    n_steps = int(bat_per_epo * int(n_epochs))
     # manually enumerate epochs
     for i in range(n_steps):
         # select a batch of real samples
@@ -239,5 +239,4 @@ def train_model(d_model, g_model, gan_model, dataset, n_epochs=N_EPOCHS, n_batch
             model_to_save = summarize_performance(i, g_model, dataset)
 
         if i == n_steps - 1:
-            save_model(model_to_save,suffix=suffix)
-            return model_to_save
+            save_model(model_to_save)

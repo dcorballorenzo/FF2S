@@ -395,7 +395,7 @@ def update_image_pool(pool, images, max_size=50):
 	return asarray(selected)
 
 # train cyclegan models
-def train_model_cycle(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, dataset, epochs=1,suffix='dev'):
+def train_model_cycle(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, dataset, epochs=1, n_batch=1):
 	# define properties of the training run
 	n_epochs, n_batch, = epochs, 1  #batch size fixed to 1 as suggested in the paper
 	# determine the output square shape of the discriminator
@@ -449,4 +449,4 @@ def train_model_cycle(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_
 			# save the models
             # #If batch size (total images)=100, model will be saved after
             #every 75th iteration x 5 = 375 iterations.
-			save_models(i, g_model_AtoB, g_model_BtoA,suffix=suffix)
+			save_models(i, g_model_AtoB, g_model_BtoA)

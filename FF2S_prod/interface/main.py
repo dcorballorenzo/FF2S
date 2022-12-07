@@ -26,13 +26,13 @@ def preprocess():
    return photo_array, sketch_array
 
 
-def train(suffix='dev'):
+def train():
     if MODEL=="CGAN":
         d_model = define_discriminator()
         g_model = define_generator()
         gan_model = define_gan(g_model, d_model)
         dataset = preprocess()
-        model = train_model(d_model, g_model, gan_model, dataset,suffix=suffix)
+        model = train_model(d_model, g_model, gan_model, dataset)
         return model
 
     elif MODEL =="CycleGAN":
@@ -49,15 +49,15 @@ def train(suffix='dev'):
         # composite: B -> A -> [real/fake, B]
         c_model_BtoA = define_composite_model(g_model_BtoA, d_model_A, g_model_AtoB)
         dataset = preprocess()
-        train_model_cycle(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, dataset,suffix=suffix)
+        train_model_cycle(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, dataset)
 
 
 
-def pred(visualize=False,model_suffix='dev'):
+def pred(visualize=False):
     """
     Make a prediction using the latest trained model
     """
-    model = load_model(os.path.join(LOCAL_REGISTRY_PATH,"models",f"model_{model_suffix}.h5"))
+    model = load_model(os.path.join("/Users/alicepannequin/code/dcorballorenzo/FF2S/training_outputs/models/model_20221205-174911.h5"))
     X_new_photo = get_photo_sample(n_samples=1)
     X_pred = load_images(X_new_photo,PHOTO_PATH)
 
@@ -81,5 +81,5 @@ def pred(visualize=False,model_suffix='dev'):
 
 if __name__=="__main__":
     preprocess()
-    train(suffix=sys.argv[1])
-    pred(visualize=True,model_suffix=sys.argv[1])
+    train()
+    pred(visualize=True)
