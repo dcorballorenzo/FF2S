@@ -1,6 +1,7 @@
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
+import cv2
 
 def same_size(path):
     '''

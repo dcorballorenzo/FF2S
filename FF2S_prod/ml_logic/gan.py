@@ -217,9 +217,18 @@ def train_model(d_model, g_model, gan_model, dataset, n_epochs=N_EPOCHS, n_batch
     # unpack dataset
     trainA, trainB = dataset
     # calculate the number of batches per training epoch
-    bat_per_epo = int(len(trainA) / n_batch)
+    bat_per_epo = int(int(len(trainA)) / int(n_batch))
     # calculate the number of training iterations
-    n_steps = int(bat_per_epo * n_epochs)
+    n_steps = int(int(bat_per_epo) * int(n_epochs))
+    print(f"Shape trainA: {trainA.shape}")
+    print(f"n_batch: {n_batch}")
+    print(f"len trainA: {len(trainA)}")
+    print(f"bat_per_epo: {bat_per_epo}")
+    print(f"Number of steps: {n_steps}")
+    print(f"n epochs {n_epochs}")
+
+
+
     # manually enumerate epochs
     for i in range(n_steps):
         # select a batch of real samples

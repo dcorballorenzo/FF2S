@@ -1,12 +1,11 @@
 .DS_Store
 .python-version
 raw_data/*
-preproc_data/*
-preproc_sketch/*
 .env
 *.egg-info
-sketch_preproc/
 CycleGan_results/models/*
-training_outputs/
-*/__pycache__
+*FF2S_prod/ml_logic/__pycache__/*
 *.pyc
+*.png
+*.h5
+*.jpg
