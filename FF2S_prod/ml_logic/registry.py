@@ -1,6 +1,7 @@
 from FF2S_prod.ml_logic.params import LOCAL_REGISTRY_PATH
 
 
+import matplotlib.pyplot as plt
 import glob
 import os
 import time
@@ -22,19 +23,8 @@ def save_model(model: Model = None,
 
     print(Fore.BLUE + "\nSave model to local disk..." + Style.RESET_ALL)
 
-    # save params
-    if params is not None:
-        params_path = os.path.join(LOCAL_REGISTRY_PATH, "params", suffix + ".pickle")
-        print(f"- params path: {params_path}")
-        with open(params_path, "wb") as file:
-            pickle.dump(params, file)
-
-    # save metrics
-    if metrics is not None:
-        metrics_path = os.path.join(LOCAL_REGISTRY_PATH, "metrics", suffix + ".pickle")
-        print(f"- metrics path: {metrics_path}")
-        with open(metrics_path, "wb") as file:
-            pickle.dump(metrics, file)
+    # save training sketches
+    #TO IMPORT FROM THE gan.py file
 
     # save model
     if model is not None:
@@ -68,3 +58,9 @@ def load_model(save_copy_locally=False) -> Model:
     print("\n✅ model loaded from disk")
 
     return model
+
+def save_predictions(y_pred,output_path):
+    y_norm = (y_pred + 1) / 2
+    plt.imsave(output_path,y_norm,format="png")
+
+    return None

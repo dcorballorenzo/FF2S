@@ -21,7 +21,7 @@ from FF2S_prod.ml_logic.registry import save_model
 import os
 import matplotlib.pyplot as plt
 
-from FF2S_prod.ml_logic.params import LOCAL_REGISTRY_PATH,N_EPOCHS
+from FF2S_prod.ml_logic.params import LOCAL_REGISTRY_PATH,N_EPOCHS,PREDICT_NAME
 
 
 def define_discriminator(image_shape=(256,256,3)):
@@ -172,7 +172,7 @@ def generate_fake_samples(g_model, samples, patch_shape):
 
 
  #generate samples and save as a plot and save the model
-def summarize_performance(step, g_model, dataset, n_samples=3):
+def summarize_performance(step, g_model, dataset, n_samples=3,suffix="dev"):
  # select a sample of input images
     [X_realA, X_realB], _ = generate_real_samples(dataset, n_samples, 1)
     # generate a batch of fake samples
@@ -198,14 +198,14 @@ def summarize_performance(step, g_model, dataset, n_samples=3):
         plt.imshow(X_realB[i])
 
     # save plot to file
-    filename1 = os.path.join(LOCAL_REGISTRY_PATH,"generated_sketches",'plot_%06d.png' % (step+1) )
-    plt.savefig(filename1)
+    output_path = os.path.join(LOCAL_REGISTRY_PATH,"training_sketches",'plot_%06d_%s.png' % ((step+1), suffix) )
+    plt.savefig(output_path)
     plt.close()
 
 	# save the generator model
     #filename2 = os.path.join(LOCAL_REGISTRY_PATH,"generated_sketches",'model_%06d.png' % (step+1) )
     #g_model.save(filename2)
-    #print('>Saved: %s and %s' % (filename1, filename2))
+    #print('>Saved: %s and %s' % (output_path, filename2))
     return g_model
 
 
@@ -245,7 +245,7 @@ def train_model(d_model, g_model, gan_model, dataset, n_epochs=N_EPOCHS, n_batch
         print('>%d, d1[%.3f] d2[%.3f] g[%.3f]' % (i+1, d_loss1, d_loss2, g_loss))
         # summarize model performance
         if (i+1) % (bat_per_epo * 1) == 0:
-            model_to_save = summarize_performance(i, g_model, dataset)
+            model_to_save = summarize_performance(i, g_model, dataset,suffix=suffix)
 
         if i == n_steps - 1:
             save_model(model_to_save,suffix=suffix)

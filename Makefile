@@ -1,3 +1,3 @@
-train:
+sketch:
 
-	python FF2S_prod/interface/main.py $(ARGS)
+	python FF2S_prod/interface/main.py $(PREDICT_NAME)

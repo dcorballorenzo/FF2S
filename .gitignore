@@ -10,4 +10,6 @@ cycle_gan_results/models/*
 *.h5
 *.jpg
 preproc_data/*
-training_outputs/*
+training_outputs/models/*
+training_outputs/predict_sketches/*
+training_outputs/training_sketches/*

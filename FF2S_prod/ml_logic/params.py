@@ -30,3 +30,6 @@ LOCAL_REGISTRY_PATH=os.environ.get("LOCAL_REGISTRY_PATH")
 MODEL=os.environ.get("MODEL")
 
 N_EPOCHS=os.environ.get("N_EPOCHS")
+
+PREDICT_NAME=os.environ.get("PREDICT_NAME")
+N_PREDICT=os.environ.get("N_PREDICT")
