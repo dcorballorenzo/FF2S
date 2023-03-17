@@ -4,11 +4,11 @@ import pandas as pd
 from colorama import Fore, Style
 
 from FF2S_prod.ml_logic.gan import train_model
-from FF2S_prod.ml_logic.registry import load_model, save_model
+from FF2S_prod.ml_logic.registry import load_model, save_model, save_predictions
 from FF2S_prod.ml_logic.data import get_photo_sample,get_sketch_sample, load_images, clean_namelist
 from FF2S_prod.ml_logic.cycle_gan import define_discriminator_cycle, define_generator_cycle, define_composite_model, train_model_cycle
 from FF2S_prod.ml_logic.gan import define_discriminator, define_generator, define_gan, train_model
-from FF2S_prod.ml_logic.params import PHOTO_TRAIN, SKETCH_TRAIN, PHOTO_TEST, SKETCH_TEST, MODEL,LOCAL_REGISTRY_PATH
+from FF2S_prod.ml_logic.params import PHOTO_TRAIN, SKETCH_TRAIN, PHOTO_TEST, SKETCH_TEST, MODEL,LOCAL_REGISTRY_PATH,N_PREDICT
 
 import matplotlib.pyplot as plt
 import sys
@@ -56,12 +56,12 @@ def train(suffix='dev'):
 
 
 
-def pred(visualize=False,model_suffix='dev'):
+def pred(model_suffix='dev',n_predict=N_PREDICT):
     """
     Make a prediction using the latest trained model
     """
     model = load_model(os.path.join(LOCAL_REGISTRY_PATH,"models",f"model_{model_suffix}.h5"))
-    X_new_photo = get_photo_sample(photo_list=clean_namelist(os.listdir(PHOTO_TEST)),n_samples=1)
+    X_new_photo = get_photo_sample(photo_list=clean_namelist(os.listdir(PHOTO_TEST)),n_samples=n_predict)
 
     X_pred = load_images(X_new_photo,PHOTO_TEST)
 
@@ -69,21 +69,15 @@ def pred(visualize=False,model_suffix='dev'):
     if len(X_processed.shape)==3: X_processed = X_processed.reshape((1, 256, 256, 3))
     # X_processed = X_processed[0]
 
-    y_pred = model.predict(X_processed)[0]
+    for i in range(int(n_predict)):
+        y_pred = model.predict(X_processed)[i]
+        output_path= os.path.join(LOCAL_REGISTRY_PATH, "predict_sketches",'prediction_%03d_%s.png' % ((i+1), model_suffix))
+        save_predictions(y_pred=y_pred,output_path=output_path)
 
-    print("\n✅ prediction done: ", y_pred, y_pred.shape)
-
-    if visualize:
-        plt.imshow(y_pred)
-        plt.show()
-    else:
-        return y_pred
-
-
-
+    print("\n✅ prediction done: ")
 
 
 if __name__=="__main__":
     preprocess()
     train(suffix=sys.argv[1])
-    pred(visualize=True,model_suffix=sys.argv[1])
+    pred(model_suffix=sys.argv[1])
