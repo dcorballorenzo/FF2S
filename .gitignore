@@ -2,7 +2,6 @@
 .python-version
 .env
 *.egg-info
-cycle_gan_results/models/*
 *FF2S_prod/ml_logic/__pycache__/*
 *.pyc
 *.png
