@@ -1,7 +1,7 @@
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
-import cv2
+from PIL import Image
 
 def same_size(path):
     '''
@@ -65,8 +65,25 @@ def photo_sketch_load(photos_path: str, sketches_path:str):
 def clean_namelist(raw_namelist):
 #clean the .jpg name list and sort it
     clean_name_list = list()
-    for x in raw_namelist:
-        if ".jpg" in x:
+    for x in sorted(raw_namelist):
+        if ".jpg" in x.lower():
             clean_name_list.append(x)
-    clean_name_list.sort()
     return clean_name_list
+
+def resize(source_path,destination_path,name_list,output_name,cpt,size=(256,256)):
+    for name in name_list:
+        photo=Image.open(os.path.join(source_path,name))
+        resized_photo=photo.resize(size)
+        resized_photo.save(os.path.join(destination_path,f"{output_name}{str(cpt+1).rjust(4,'0')}.jpg"))
+        cpt+=1
+    return None
+
+def get_photo_sketch_dict(photo_list,sketch_list):
+    #Takes 2 lists of matching length as input and returns a dictionary with the
+    #first list as key and the second list as value (in corresponding order
+
+    if len(photo_list)==len(sketch_list):
+        return {photo_list[i]:sketch_list[i] for i in range(len(photo_list))}
+    else :
+        print("The length of the sketch list must match the length of the photo list! Please check the data folders.")
+        return None

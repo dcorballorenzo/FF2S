@@ -13,3 +13,5 @@ preproc_data/*
 training_outputs/models/*
 training_outputs/predict_sketches/*
 training_outputs/training_sketches/*
+notebooks/*
+*.ipynb
