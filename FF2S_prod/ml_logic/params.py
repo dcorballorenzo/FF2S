@@ -1,6 +1,12 @@
 import os
 from FF2S_prod.ml_logic.preproc import clean_namelist
 
+#Path to raw data
+
+PHOTO_RAW=os.path.join(os.getcwd(),"data","raw_data","photo")
+SKETCH_RAW=os.path.join(os.getcwd(),"data","raw_data","sketch")
+
+
 SKETCH_TRAIN=os.environ.get("SKETCH_TRAIN")
 PHOTO_TRAIN=os.environ.get("PHOTO_TRAIN")
 SAMPLE_SIZE=os.environ.get("SAMPLE_SIZE")
@@ -33,3 +39,5 @@ N_EPOCHS=os.environ.get("N_EPOCHS")
 
 PREDICT_NAME=os.environ.get("PREDICT_NAME")
 N_PREDICT=os.environ.get("N_PREDICT")
+
+TTS_RATE=0.2

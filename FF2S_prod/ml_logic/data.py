@@ -1,5 +1,5 @@
 from FF2S_prod.ml_logic.preproc import clean_namelist
-from FF2S_prod.ml_logic.params import SAMPLE_SIZE, PHOTO_TO_SKETCH_DICT,PHOTO_FULL_LIST
+from FF2S_prod.ml_logic.params import SAMPLE_SIZE, PHOTO_TO_SKETCH_DICT,PHOTO_FULL_LIST,PHOTO_TRAIN,SKETCH_TRAIN
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -25,3 +25,14 @@ def load_images(image_list, path):
         data_list.append(np.asarray(plt.imread(os.path.join(path, filename))))
 
     return np.asarray(data_list)
+
+def load_array():
+   photo_sample = get_photo_sample()
+   sketch_sample=get_sketch_sample(photo_sample)
+   photo_array = load_images(photo_sample, PHOTO_TRAIN)
+   photo_array=(photo_array-127.5)/127.5
+
+   sketch_array = load_images(sketch_sample, SKETCH_TRAIN)
+   sketch_array=(sketch_array-127.5)/127.5
+
+   return photo_array, sketch_array
