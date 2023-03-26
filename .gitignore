@@ -11,5 +11,13 @@ preproc_data/*
 training_outputs/models/*
 training_outputs/predict_sketches/*
 training_outputs/training_sketches/*
+data/preproc_data/test/photo/*
+data/preproc_data/test/sketch/*
+data/preproc_data/train/photo/*
+data/preproc_data/train/sketch/*
+data/raw_data/photo/photo1/*
+data/raw_data/photo/photo2/*
+data/raw_data/sketch/sketch1/*
+data/raw_data/sketch/sketch1/*
 notebooks/*
 *.ipynb
