@@ -1,20 +1,14 @@
-import numpy as np
-import pandas as pd
 import shutil
-
-from colorama import Fore, Style
+import os
 
 from FF2S_prod.ml_logic.gan import train_model
-from FF2S_prod.ml_logic.preproc import clean_namelist,resize,get_photo_sketch_dict
-from FF2S_prod.ml_logic.registry import load_model, save_model, save_predictions
-from FF2S_prod.ml_logic.data import get_photo_sample,get_sketch_sample, load_images, clean_namelist,load_array
+from FF2S_prod.ml_logic.preproc import clean_namelist,resize, emptying
+from FF2S_prod.ml_logic.registry import load_model, save_predictions
+from FF2S_prod.ml_logic.data import get_photo_sample,get_sketch_sample, load_images,load_array
 from FF2S_prod.ml_logic.cycle_gan import define_discriminator_cycle, define_generator_cycle, define_composite_model, train_model_cycle
 from FF2S_prod.ml_logic.gan import define_discriminator, define_generator, define_gan, train_model
-from FF2S_prod.ml_logic.params import PHOTO_RAW, SKETCH_RAW,PHOTO_TRAIN, SKETCH_TRAIN, PHOTO_TEST, SKETCH_TEST, MODEL,LOCAL_REGISTRY_PATH,N_PREDICT,TTS_RATE
+from FF2S_prod.ml_logic.params import PHOTO_RAW, SKETCH_RAW,PHOTO_TRAIN, SKETCH_TRAIN, PHOTO_TEST, SKETCH_TEST, MODEL,LOCAL_REGISTRY_PATH,N_PREDICT,TTS_RATIO,PREDICT_NAME
 
-import matplotlib.pyplot as plt
-import sys
-import os
 
 
 def preprocess():
@@ -57,30 +51,41 @@ def preprocess():
 
     print("\n✅ Preprocessing done: ")
 
-def train_test_split(rate=TTS_RATE):
+
+def empty():
+
+    print("🧹 Starting cleaning of preproc_data folders ...")
+
+    #Emptying the train photos and sketches folders
+    emptying(PHOTO_TRAIN)
+    emptying(SKETCH_TRAIN)
+
+    #Emptying the test photos and sketches folders
+    emptying(PHOTO_TEST)
+    emptying(SKETCH_TEST)
+
+    print("\n✅ Cleaning done: ")
+
+
+def train_test_split(ratio=TTS_RATIO):
 
     print("🖖 Starting Train-Test-Split ...")
-    # Get the clean lists for photos and sketches
 
-    photo_list_clean=clean_namelist(os.listdir(PHOTO_RAW))
-    sketch_list_clean=clean_namelist(os.listdir(SKETCH_RAW))
-
-    #create a translation dictionary from the two clean lists
-    translation_dict=get_photo_sketch_dict(photo_list_clean,sketch_list_clean)
+    photo_list_full=clean_namelist(os.listdir(PHOTO_RAW))
 
     # sample the test photos
-    photo_test=get_photo_sample(photo_list_clean,round(2006*rate))
+    photo_test=get_photo_sample(photo_path=PHOTO_RAW,n_samples=round(2006*ratio))
     photo_test.sort()
     #get the sample of corresponding sketches
-    sketch_test=get_sketch_sample(photo_test,translation_dict)
+    sketch_test=get_sketch_sample(photo_sample=photo_test,photo_path=PHOTO_RAW,sketch_path=SKETCH_RAW)
     sketch_test.sort()
 
     #get the train photos and sketches by difference
 
-    photo_train=[photo for photo in photo_list_clean if photo not in photo_test]
+    photo_train=[photo for photo in photo_list_full if photo not in photo_test]
     photo_train.sort()
 
-    sketch_train=get_sketch_sample(photo_train,translation_dict)
+    sketch_train=get_sketch_sample(photo_sample=photo_train,photo_path=PHOTO_RAW,sketch_path=SKETCH_RAW)
     sketch_train.sort()
 
     print("📸 Sampling done")
@@ -107,7 +112,7 @@ def train_test_split(rate=TTS_RATE):
 
     print("\n✅ Train-Test-Split done: ")
 
-def train(suffix='dev'):
+def train(suffix=PREDICT_NAME):
     if MODEL=="CGAN":
         d_model = define_discriminator()
         g_model = define_generator()
@@ -136,12 +141,12 @@ def train(suffix='dev'):
 
 
 
-def pred(model_suffix='dev',n_predict=N_PREDICT):
+def pred(model_suffix=PREDICT_NAME,n_predict=N_PREDICT):
     """
     Make a prediction using the latest trained model
     """
     model = load_model(os.path.join(LOCAL_REGISTRY_PATH,"models",f"model_{model_suffix}.h5"))
-    X_new_photo = get_photo_sample(photo_list=clean_namelist(os.listdir(PHOTO_TEST)),n_samples=n_predict)
+    X_new_photo = get_photo_sample(photo_path=PHOTO_TEST,n_samples=n_predict)
 
     X_pred = load_images(X_new_photo,PHOTO_TEST)
 
@@ -151,14 +156,14 @@ def pred(model_suffix='dev',n_predict=N_PREDICT):
 
     for i in range(int(n_predict)):
         y_pred = model.predict(X_processed)[i]
-        output_path= os.path.join(LOCAL_REGISTRY_PATH, "predict_sketches",'prediction_%03d_%s.png' % ((i+1), model_suffix))
-        save_predictions(y_pred=y_pred,output_path=output_path)
+        save_predictions(y_pred=y_pred,output_path=LOCAL_REGISTRY_PATH,suffix=model_suffix,pred_number=i)
 
     print("\n✅ prediction done: ")
 
 
 if __name__=="__main__":
     preprocess()
+    empty()
     train_test_split()
-    train(suffix=sys.argv[1])
-    pred(model_suffix=sys.argv[1])
+    train()
+    pred()
