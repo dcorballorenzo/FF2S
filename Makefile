@@ -1,3 +1,16 @@
-sketch:
+run_preprocess:
+	python -c 'from FF2S_prod.interface.main import preprocess; preprocess()'
 
-	python FF2S_prod/interface/main.py $(PREDICT_NAME)
+run_clear:
+	python -c 'from FF2S_prod.interface.main import empty; empty()'
+
+run_split:
+	python -c 'from FF2S_prod.interface.main import train_test_split; train_test_split()'
+
+run_train:
+	python -c 'from FF2S_prod.interface.main import train; train()'
+
+run_pred:
+	python -c 'from FF2S_prod.interface.main import pred; pred()'
+
+run_all: run_preprocess run_clear run_split run_train run_pred

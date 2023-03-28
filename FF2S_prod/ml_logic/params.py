@@ -1,43 +1,36 @@
 import os
-from FF2S_prod.ml_logic.preproc import clean_namelist
 
 #Path to raw data
 
 PHOTO_RAW=os.path.join(os.getcwd(),"data","raw_data","photo")
 SKETCH_RAW=os.path.join(os.getcwd(),"data","raw_data","sketch")
 
+#Path to preprocessed data
 
-SKETCH_TRAIN=os.environ.get("SKETCH_TRAIN")
-PHOTO_TRAIN=os.environ.get("PHOTO_TRAIN")
-SAMPLE_SIZE=os.environ.get("SAMPLE_SIZE")
+SKETCH_TRAIN=os.path.join(os.getcwd(),"data","preproc_data","train","sketch")
+PHOTO_TRAIN=os.path.join(os.getcwd(),"data","preproc_data","train","photo")
 
-SKETCH_TEST=os.environ.get("SKETCH_TEST")
-PHOTO_TEST=os.environ.get("PHOTO_TEST")
+SKETCH_TEST=os.path.join(os.getcwd(),"data","preproc_data","test","sketch")
+PHOTO_TEST=os.path.join(os.getcwd(),"data","preproc_data","test","photo")
 
-SKETCH_FULL_LIST=clean_namelist(os.listdir(SKETCH_TRAIN))
-PHOTO_FULL_LIST=clean_namelist(os.listdir(PHOTO_TRAIN))
+#Ratio used for the Train-Test-Split
 
+TTS_RATIO=0.2
 
-def get_photo_sketch_dict(photo_list,sketch_list):
-    """Takes 2 lists of matching length as input and returns a dictionary with the
-    first list as key and the second list as value (in corresponding order"""
+#Type of model to use ("CGAN" or "CycleGAN")
 
-    if len(photo_list)==len(sketch_list):
-        return {photo_list[i]:sketch_list[i] for i in range(len(photo_list))}
-    else :
-        print("The length of the sketch list must match the length of the photo list! Please check the data folders.")
-        return None
+MODEL="CGAN"
+
+#Path to save outputs
+
+LOCAL_REGISTRY_PATH=os.path.join(os.getcwd(),"training_outputs")
 
 
-PHOTO_TO_SKETCH_DICT=get_photo_sketch_dict(PHOTO_FULL_LIST,SKETCH_FULL_LIST)
+#parameters for the model training (name of the model, number of images and number of epochs)
+SAMPLE_SIZE=10
+N_EPOCHS=5
+PREDICT_NAME=f"{MODEL}_{SAMPLE_SIZE}i_{N_EPOCHS}e"
 
-LOCAL_REGISTRY_PATH=os.environ.get("LOCAL_REGISTRY_PATH")
 
-MODEL=os.environ.get("MODEL")
-
-N_EPOCHS=os.environ.get("N_EPOCHS")
-
-PREDICT_NAME=os.environ.get("PREDICT_NAME")
-N_PREDICT=os.environ.get("N_PREDICT")
-
-TTS_RATE=0.2
+#Number of images to predict with the model
+N_PREDICT=2

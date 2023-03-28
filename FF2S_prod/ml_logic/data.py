@@ -1,18 +1,19 @@
-from FF2S_prod.ml_logic.preproc import clean_namelist
-from FF2S_prod.ml_logic.params import SAMPLE_SIZE, PHOTO_TO_SKETCH_DICT,PHOTO_FULL_LIST,PHOTO_TRAIN,SKETCH_TRAIN
+from FF2S_prod.ml_logic.preproc import clean_namelist,get_photo_sketch_dict
+from FF2S_prod.ml_logic.params import SAMPLE_SIZE,PHOTO_TRAIN,SKETCH_TRAIN
 import os
 import numpy as np
 import matplotlib.pyplot as plt
 import random
 
 
-def get_photo_sample(photo_list=PHOTO_FULL_LIST, n_samples = SAMPLE_SIZE ):
+def get_photo_sample(photo_path=PHOTO_TRAIN, n_samples = SAMPLE_SIZE ):
 
+    photo_list=clean_namelist(os.listdir(photo_path))
     photo_sample = random.sample(photo_list,int(n_samples))
     return photo_sample
 
-def get_sketch_sample (photo_sample,translation_dict= PHOTO_TO_SKETCH_DICT ):
-
+def get_sketch_sample (photo_sample,photo_path=PHOTO_TRAIN,sketch_path=SKETCH_TRAIN ):
+    translation_dict=get_photo_sketch_dict(photo_path,sketch_path)
     sketch_sample = [translation_dict[photo] for photo in photo_sample]
     return sketch_sample
 

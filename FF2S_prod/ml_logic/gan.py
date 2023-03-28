@@ -1,11 +1,6 @@
-from numpy import load
 from numpy import zeros
 from numpy import ones
-from numpy import asarray
-from numpy import vstack
 from numpy.random import randint
-from os import listdir
-from tensorflow.keras import utils
 from keras.optimizers import Adam
 from keras.initializers import RandomNormal
 from keras.models import Model
@@ -17,7 +12,7 @@ from keras.layers import Activation
 from keras.layers import Concatenate
 from keras.layers import Dropout
 from keras.layers import BatchNormalization
-from FF2S_prod.ml_logic.registry import save_model
+from FF2S_prod.ml_logic.registry import save_model,save_training_sketches
 import os
 import matplotlib.pyplot as plt
 
@@ -181,34 +176,10 @@ def summarize_performance(step, g_model, dataset, n_samples=3,suffix="dev"):
     X_realA = (X_realA + 1) / 2.0
     X_realB = (X_realB + 1) / 2.0
     X_fakeB = (X_fakeB + 1) / 2.0
-    # plot real source images
-    for i in range(n_samples):
-        plt.subplot(3, n_samples, 1 + i)
-        plt.axis('off')
-        plt.imshow(X_realA[i])
-    # plot generated target image
-    for i in range(n_samples):
-        plt.subplot(3, n_samples, 1 + n_samples + i)
-        plt.axis('off')
-        plt.imshow(X_fakeB[i])
-    # plot real target image
-    for i in range(n_samples):
-        plt.subplot(3, n_samples, 1 + n_samples*2 + i)
-        plt.axis('off')
-        plt.imshow(X_realB[i])
 
-    # save plot to file
-    output_path = os.path.join(LOCAL_REGISTRY_PATH,"training_sketches",'plot_%06d_%s.png' % ((step+1), suffix) )
-    plt.savefig(output_path)
-    plt.close()
+    save_training_sketches(X_realA,X_realB,X_fakeB,n_samples,suffix,step)
 
-	# save the generator model
-    #filename2 = os.path.join(LOCAL_REGISTRY_PATH,"generated_sketches",'model_%06d.png' % (step+1) )
-    #g_model.save(filename2)
-    #print('>Saved: %s and %s' % (output_path, filename2))
     return g_model
-
-
 
     # train pix2pix models
 def train_model(d_model, g_model, gan_model, dataset, n_epochs=N_EPOCHS, n_batch=1,suffix='dev'):

@@ -1,21 +1,13 @@
 from FF2S_prod.ml_logic.params import LOCAL_REGISTRY_PATH
-
-
 import matplotlib.pyplot as plt
 import glob
 import os
-import time
-import pickle
-
 from colorama import Fore, Style
 
-
-from tensorflow.keras import Model, models
+from keras import Model, models
 
 
 def save_model(model: Model = None,
-               params: dict = None,
-               metrics: dict = None,
                suffix :str = 'dev') -> None:
     """
     persist trained model, params and metrics
@@ -37,6 +29,28 @@ def save_model(model: Model = None,
 
     return None
 
+def save_training_sketches(X_realA, X_realB , X_fakeB,n_samples,suffix,step):
+
+    # plot real source images
+    for i in range(n_samples):
+        plt.subplot(3, n_samples, 1 + i)
+        plt.axis('off')
+        plt.imshow(X_realA[i])
+    # plot generated target image
+    for i in range(n_samples):
+        plt.subplot(3, n_samples, 1 + n_samples + i)
+        plt.axis('off')
+        plt.imshow(X_fakeB[i])
+    # plot real target image
+    for i in range(n_samples):
+        plt.subplot(3, n_samples, 1 + n_samples*2 + i)
+        plt.axis('off')
+        plt.imshow(X_realB[i])
+
+    # save plot to file
+    output_path = os.path.join(LOCAL_REGISTRY_PATH,"training_sketches",'plot_%s_%06d.png' % (suffix,(step+1)) )
+    plt.savefig(output_path)
+    plt.close()
 
 def load_model(save_copy_locally=False) -> Model:
     """
@@ -59,8 +73,9 @@ def load_model(save_copy_locally=False) -> Model:
 
     return model
 
-def save_predictions(y_pred,output_path):
+def save_predictions(y_pred,output_path,suffix,pred_number):
+    file_path= os.path.join(output_path, "predict_sketches",'prediction_%s_%03d.png' % (suffix,(pred_number+1)))
     y_norm = (y_pred + 1) / 2
-    plt.imsave(output_path,y_norm,format="png")
+    plt.imsave(file_path,y_norm,format="png")
 
     return None

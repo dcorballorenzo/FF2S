@@ -1,6 +1,6 @@
-from tensorflow.keras.layers import Layer, InputSpec
-from tensorflow.keras import initializers, regularizers, constraints
-from tensorflow.keras import backend as K
+from keras.layers import Layer, InputSpec
+from keras import initializers, regularizers, constraints
+from keras import backend as K
 
 from FF2S_prod.ml_logic.params import LOCAL_REGISTRY_PATH,N_EPOCHS
 
