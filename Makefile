@@ -15,4 +15,4 @@ run_pred:
 
 run_all: run_preprocess run_clear run_split run_train run_pred
 
-run_trade_pred: run_train run_pred
+run_train_pred: run_train run_pred
